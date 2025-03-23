@@ -1,0 +1,23 @@
+# 使用官方 Python 3.10 基础映像
+FROM python:3.10-slim
+
+# 设置工作目录
+WORKDIR /app
+
+# 更新系统并安装 git
+RUN apt-get update && apt-get install -y git
+
+# 将 Python 依赖拷贝到容器中
+COPY requirements.txt ./
+
+# 安装 Python 依赖
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 从 GitHub 直接安装 segment-anything
+RUN pip install git+https://github.com/facebookresearch/segment-anything.git
+
+# 将您的代码拷贝到容器中
+COPY . .
+
+# 设置容器默认运行的命令
+CMD ["python", "SAM.py", "--input_point", "100,100;110,110;0,0", "--input_label", "1,1,0", "--image_path", "./path/to/your/image.jpg"]
